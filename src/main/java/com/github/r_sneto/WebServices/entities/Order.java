@@ -1,6 +1,7 @@
 package com.github.r_sneto.WebServices.entities;
 
-import com.github.r_sneto.WebServices.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.github.r_sneto.WebServices.entities.enums.OrderStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -19,9 +20,11 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate moment;
 
-    private OrderStatus orderStatus;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    private Instant moment;
+
+    private Integer orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
@@ -30,9 +33,10 @@ public class Order implements Serializable {
     public Order() {
     }
 
-    public Order(LocalDate moment, OrderStatus orderStatus, User client) {
+    public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
+        this.id = id;
         this.moment = moment;
-        this.orderStatus = orderStatus;
+        setOrderStatus(orderStatus);
         this.client = client;
     }
 
@@ -44,20 +48,22 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public LocalDate getMoment() {
+    public Instant getMoment() {
         return moment;
     }
 
-    public void setMoment(LocalDate moment) {
+    public void setMoment(Instant moment) {
         this.moment = moment;
     }
 
     public OrderStatus getOrderStatus() {
-        return orderStatus;
+        return OrderStatus.valueOf(orderStatus);
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+        if (orderStatus != null) {
+            this.orderStatus = orderStatus.getCode();
+        }
     }
 
     public User getClient() {
