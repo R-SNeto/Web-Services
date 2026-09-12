@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/users/")
+@RequestMapping(value = "/users")
 public class UserResource {
     //RestController permite que o Spring identifique uma classe como sendo um Controller de padrão Rest
     //RequestMapping nomeia o caminho das requisições em uma classe, atribuindo um valor para ele
